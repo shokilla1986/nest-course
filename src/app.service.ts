@@ -22,4 +22,19 @@ export class AppService {
     news.push(data);
     return data;
   }
+
+  async updateNews(data: News): Promise<News> {
+    let editNews = news[data.id];
+    if (editNews) {
+      editNews = {
+        ...editNews,
+        ...data,
+      };
+
+      news[data.id] = editNews;
+      return news[data.id];
+    } else {
+      throw new Error('Post not found');
+    }
+  }
 }
