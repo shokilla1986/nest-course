@@ -18,6 +18,10 @@ export class AppService {
     return news;
   }
 
+  async getNew(id: number): Promise<News | undefined> {
+    return news[id - 1];
+  }
+
   async createNew(data: News): Promise<News> {
     news.push(data);
     return data;
@@ -36,5 +40,13 @@ export class AppService {
     } else {
       throw new Error('Post not found');
     }
+  }
+
+  async deleteNew(id: number): Promise<News[]> {
+    const post = news[id];
+    if (post) {
+      news.splice(id, id);
+      return news;
+    } else throw new Error('Post not found');
   }
 }
