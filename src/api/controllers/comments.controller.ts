@@ -17,52 +17,52 @@ export class CommentsController {
 
   @Get('get-all')
   async getComments(
-    @Query() @DecrementId(['postId']) query: { postId: number },
+    @Query() @DecrementId(['newsId']) query: { newsId: number },
   ): Promise<Comment[]> {
     console.log('get', query);
 
-    return this.commentsService.getComments(query.postId);
+    return this.commentsService.getComments(query.newsId);
   }
 
   @Get('get-one')
   async getComment(
     @Query()
-    @DecrementId(['postId', 'commentId'])
+    @DecrementId(['newsId', 'commentId'])
     query: {
-      postId: number;
+      newsId: number;
       commentId: number;
     },
   ): Promise<Comment | undefined> {
     console.log('get-1', query);
-    return this.commentsService.getComment(query.postId, query.commentId);
+    return this.commentsService.getComment(query.newsId, query.commentId);
   }
 
   @Post('create')
   async createComment(
-    @Query() @DecrementId(['postId']) query: { postId: number },
+    @Query() @DecrementId(['newsId']) query: { newsId: number },
     @Body() data: Comment,
   ): Promise<Comment> {
     console.log('post', query);
-    return this.commentsService.createComment(query.postId, data);
+    return this.commentsService.createComment(query.newsId, data);
   }
 
   @Delete('delete')
   async deleteComment(
     @Body()
     body: {
-      postId: number;
+      newsId: number;
       commentId: number;
     },
   ): Promise<Comment[]> {
     console.log('delete', body);
-    return this.commentsService.deleteComment(body.postId, body.commentId);
+    return this.commentsService.deleteComment(body.newsId, body.commentId);
   }
 
   @Put('update')
   async updateComment(
     @Query()
-    @DecrementId(['postId', 'commentId'])
-    query: { postId: number; commentId: number },
+    @DecrementId(['newsId', 'commentId'])
+    query: { newsId: number; commentId: number },
     @Body()
     body: Comment,
   ): Promise<Comment> {
@@ -70,7 +70,7 @@ export class CommentsController {
     console.log('update body: ', body);
 
     return this.commentsService.updateComment(
-      query.postId,
+      query.newsId,
       query.commentId,
       body,
     );

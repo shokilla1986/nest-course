@@ -22,13 +22,9 @@ export class CommentsService {
 
   async createComment(newId: number, data: Comment): Promise<Comment> {
     const news = await this.newsService.getNews();
-    console.log('news[newId].comments ', news[newId].comments);
-    console.log('data ', data);
     if (!news[newId].comments) {
       news[newId].comments = [];
-      console.log('news[newId].comments [] ', news[newId].comments);
     }
-    console.log('news[newId].comments::: ', news[newId].comments);
     news[newId].comments.push(data);
     return data;
   }
@@ -55,7 +51,7 @@ export class CommentsService {
     const newsItem = news[newId - 1];
     const comments = newsItem.comments;
     if (comments) {
-      comments.splice(commentId, 1);
+      comments.splice(commentId - 1, 1);
       return comments;
     } else throw new Error('Comment not found');
   }
