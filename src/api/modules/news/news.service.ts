@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { News } from './dto/news.dto';
+import { News } from '../../dto/news.dto';
 
 const news: News[] = [
   {
@@ -9,11 +9,23 @@ const news: News[] = [
     text: 'first',
     createdAt: new Date(Date.now()),
     updatedAt: new Date(Date.now()),
+    comments: [
+      {
+        id: 1,
+        text: 'comment',
+        createdAt: new Date(Date.now()),
+      },
+      {
+        id: 2,
+        text: 'comment second',
+        createdAt: new Date(Date.now()),
+      },
+    ],
   },
 ];
 
 @Injectable()
-export class AppService {
+export class NewsService {
   async getNews(): Promise<News[]> {
     return news;
   }
