@@ -7,10 +7,11 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { News } from '../dto/news.dto';
+import { News, CreateNews } from '../dto/news.dto';
 import { NewsService } from '../modules/news/news.service';
 import { htmlTemplate } from '../../views/template';
 import { newsTemplate } from '../../views/news';
+import { DecrementId } from '../../utils/decorators/decrement-id';
 
 @Controller('news')
 export class NewsController {
@@ -22,23 +23,30 @@ export class NewsController {
   }
 
   @Get('get-one')
-  async getNew(@Query() query: { id: number }): Promise<News | undefined> {
-    return this.newsService.getNew(query.id);
+  async getNew(
+    @Query() @DecrementId(['newsId']) query: { newsId: number },
+  ): Promise<News | undefined> {
+    return this.newsService.getNew(query.newsId);
   }
 
   @Post('create')
-  async createNews(@Body() data: News): Promise<News> {
+  async createNews(@Body() data: CreateNews): Promise<News> {
     return this.newsService.createNew(data);
   }
 
   @Put('update')
-  async updateNews(@Body() data: News): Promise<News> {
-    return this.newsService.updateNews(data);
+  async updateNews(
+    @Query()
+    @DecrementId(['newsId'])
+    query: { newsId: number },
+    @Body() data: CreateNews,
+  ): Promise<News> {
+    return this.newsService.updateNews(query.newsId, data);
   }
 
   @Delete('delete')
-  async deleteNew(@Body() body: { id: number }): Promise<News[]> {
-    return this.newsService.deleteNew(body.id);
+  async deleteNew(@Body() body: { newsId: number }): Promise<News[]> {
+    return this.newsService.deleteNew(body.newsId);
   }
 
   @Get()

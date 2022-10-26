@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { News } from '../../dto/news.dto';
+import { CreateNews, News } from '../../dto/news.dto';
 
 const news: News[] = [
   {
@@ -14,15 +14,20 @@ const news: News[] = [
         id: 1,
         text: 'comment',
         createdAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
+        attachments: null,
       },
       {
         id: 2,
         text: 'comment second',
         createdAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
+        attachments: null,
       },
     ],
   },
 ];
+let newsId = 2;
 
 @Injectable()
 export class NewsService {
@@ -30,34 +35,41 @@ export class NewsService {
     return news;
   }
 
-  async getNew(id: number): Promise<News | undefined> {
-    return news[id - 1];
+  async getNew(newsId: number): Promise<News | undefined> {
+    return news[newsId];
   }
 
-  async createNew(data: News): Promise<News> {
-    news.push(data);
-    return data;
+  async createNew(data: CreateNews): Promise<News> {
+    const newsItem: News = {
+      ...data,
+      id: newsId++,
+      createdAt: new Date(Date.now()),
+      updatedAt: new Date(Date.now()),
+    };
+    news.push(newsItem);
+    return newsItem;
   }
 
-  async updateNews(data: News): Promise<News> {
-    let editNews = news[data.id];
+  async updateNews(newsId: number, data: CreateNews): Promise<News> {
+    let editNews = news[newsId];
     if (editNews) {
+      editNews.updatedAt = new Date(Date.now());
       editNews = {
         ...editNews,
         ...data,
       };
 
-      news[data.id] = editNews;
-      return news[data.id];
+      news[newsId] = editNews;
+      return news[newsId];
     } else {
       throw new Error('Post not found');
     }
   }
 
-  async deleteNew(id: number): Promise<News[]> {
-    const post = news[id];
+  async deleteNew(newsId: number): Promise<News[]> {
+    const post = news[newsId];
     if (post) {
-      news.splice(id, id);
+      news.splice(newsId, 1);
       return news;
     } else throw new Error('Post not found');
   }
