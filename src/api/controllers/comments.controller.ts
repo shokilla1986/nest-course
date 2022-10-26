@@ -103,15 +103,15 @@ export class CommentsController {
   @Get('file')
   async getFile(
     @Query()
-    @DecrementId(['postId', 'commentId'])
+    @DecrementId(['newsId', 'commentId'])
     query: {
-      postId: number;
+      newsId: number;
       commentId: number;
     },
     @Res() res: Response,
   ) {
     const path = await this.commentsService.getPath(
-      query.postId,
+      query.newsId,
       query.commentId,
     );
     if (!path) throw new Error('No attachment found');

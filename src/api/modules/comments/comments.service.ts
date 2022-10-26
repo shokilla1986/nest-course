@@ -84,8 +84,8 @@ export class CommentsService {
     posts[newsId - 1].comments[commentId - 1].attachments = path;
   }
 
-  async getPath(postId: number, commentId: number): Promise<string | null> {
+  async getPath(newsId: number, commentId: number): Promise<string | null> {
     const posts = await this.newsService.getNews();
-    return posts[postId].comments[commentId].attachments;
+    return posts[newsId].comments[commentId].attachments;
   }
 }
