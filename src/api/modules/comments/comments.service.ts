@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Comment } from '../../../api/dto/comments.dto';
+import { Comment, CreateComment } from '../../../api/dto/comments.dto';
 import { NewsService } from '../news/news.service';
+import { MyLogger } from '../logger/logger.service';
+
+let commentId = 3;
 
 @Injectable()
 export class CommentsService {
-  constructor(private readonly newsService: NewsService) {}
+  constructor(
+    private readonly newsService: NewsService,
+    private readonly logger: MyLogger,
+  ) {
+    this.logger.setContext('CommentsService');
+  }
 
   async getComments(newId: number): Promise<Comment[]> {
     const news = await this.newsService.getNews();
@@ -20,24 +28,32 @@ export class CommentsService {
     return comments[commentId];
   }
 
-  async createComment(newId: number, data: Comment): Promise<Comment> {
+  async createComment(newId: number, data: CreateComment): Promise<Comment> {
     const news = await this.newsService.getNews();
     if (!news[newId].comments) {
       news[newId].comments = [];
     }
-    news[newId].comments.push(data);
-    return data;
+    const comment: Comment = {
+      ...data,
+      id: commentId++,
+      createdAt: new Date(Date.now()),
+      updatedAt: new Date(Date.now()),
+      attachments: null,
+    };
+    news[newId].comments.push(comment);
+    return comment;
   }
 
   async updateComment(
     newId: number,
     commentId: number,
-    data: Comment,
+    data: CreateComment,
   ): Promise<Comment> {
     const news = await this.newsService.getNews();
     const newsItem = news[newId];
     const comments = newsItem.comments;
     let existingComment = comments[commentId];
+    existingComment.updatedAt = new Date(Date.now());
     existingComment = {
       ...existingComment,
       ...data,
@@ -54,5 +70,22 @@ export class CommentsService {
       comments.splice(commentId - 1, 1);
       return comments;
     } else throw new Error('Comment not found');
+  }
+
+  async assignFile(
+    newsId: number,
+    commentId: number,
+    path: string,
+  ): Promise<void> {
+    this.logger.warn(
+      `New file assigned to postId ${newsId} and commentId ${commentId}`,
+    );
+    const posts = await this.newsService.getNews();
+    posts[newsId - 1].comments[commentId - 1].attachments = path;
+  }
+
+  async getPath(postId: number, commentId: number): Promise<string | null> {
+    const posts = await this.newsService.getNews();
+    return posts[postId].comments[commentId].attachments;
   }
 }
