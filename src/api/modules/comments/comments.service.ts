@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Comment, CreateComment } from '../../../api/dto/comments.dto';
 import { NewsService } from '../news/news.service';
 import { MyLogger } from '../logger/logger.service';
+import { MailService } from '../../../mail/mail.service';
 
 let commentId = 3;
 
@@ -10,6 +11,7 @@ export class CommentsService {
   constructor(
     private readonly newsService: NewsService,
     private readonly logger: MyLogger,
+    private readonly mailService: MailService,
   ) {
     this.logger.setContext('CommentsService');
   }
@@ -29,6 +31,7 @@ export class CommentsService {
   }
 
   async createComment(newId: number, data: CreateComment): Promise<Comment> {
+    await this.mailService.sendLogMessage('shokilla@mail.ru');
     const news = await this.newsService.getNews();
     if (!news[newId].comments) {
       news[newId].comments = [];

@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Query,
+  Render,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -23,6 +24,12 @@ import { LoggingInterceptor } from '../modules/logger/logger.interceptor';
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
+
+  @Get('template')
+  @Render('index')
+  getTemplate(): { message: string } {
+    return { message: 'Hello world!' };
+  }
 
   @Get('get-all')
   async getComments(
